@@ -3,15 +3,12 @@ package utils
 import (
 	log "github.com/sirupsen/logrus"
 	"math/rand"
-	"os"
 	"testing"
 	"time"
 )
 
 var randomText string
 var randomPassword string
-
-const FILE_PATH = "./teste.txt"
 
 func init() {
 	rand.Seed(time.Now().UnixNano())
@@ -29,24 +26,20 @@ func RandStringRunes(n int) string {
 	return string(b)
 }
 
-func Test_SaveToFile(t *testing.T) {
+func Test_Encrypt(t *testing.T) {
 	type args struct {
 		content  string
-		filepath string
 		password string
 	}
 	tests := []struct {
 		name string
 		args args
 	}{
-		{"Success test case", args{content: randomText, filepath: FILE_PATH, password: randomPassword}},
+		{"Success test case", args{content: randomText, password: randomPassword}},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			err := SaveToFile(tt.args.content, tt.args.filepath, tt.args.password)
-			if _, err := os.Stat(FILE_PATH); !os.IsNotExist(err) {
-				os.Remove(FILE_PATH)
-			}
+			_, err := Encrypt(tt.args.content, tt.args.password)
 			if err != nil {
 				log.Error(err)
 				t.FailNow()
@@ -55,27 +48,36 @@ func Test_SaveToFile(t *testing.T) {
 	}
 }
 
-func Test_LoadFromFile(t *testing.T) {
+func Test_Decrypt(t *testing.T) {
 	type args struct {
-		filepath string
-		password string
+		ciphertext string
+		password   string
 	}
 	tests := []struct {
 		name string
 		args args
 		want string
 	}{
-		{"Success test case", args{FILE_PATH, randomPassword}, randomText},
+		{
+			"Success test case",
+			args{
+				func() string {
+					t, _ := Encrypt(randomText, randomPassword)
+					return string(t)
+				}(), randomPassword,
+			},
+			randomText,
+		},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			got, err := LoadFromFile(tt.args.filepath, tt.args.password)
+			got, err := Decrypt(tt.args.ciphertext, tt.args.password)
 			if err != nil {
 				log.Error(err)
 				t.FailNow()
 			}
 			if got != tt.want {
-				t.Errorf("LoadFromFile() = %v, want %v", got, tt.want)
+				t.Errorf("Decrypt() = %v, want %v", got, tt.want)
 			}
 		})
 	}

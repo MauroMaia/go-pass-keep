@@ -7,19 +7,17 @@ import (
 	"crypto/rand"
 	"crypto/sha256"
 	"errors"
-	"io/ioutil"
-	"os"
 )
 
-func SaveToFile(plainText string, filepath string, password string) error {
+func Encrypt(plainText string, password string) ([]byte, error) {
 
 	if err := validatePasswordAndContent(plainText, password); err != nil {
-		return err
+		return nil, err
 	}
 
 	iv := make([]byte, aes.BlockSize)
 	if _, err := rand.Read(iv); err != nil {
-		return err
+		return nil, err
 	}
 
 	var KEY = sha256.Sum256([]byte(password))
@@ -27,39 +25,24 @@ func SaveToFile(plainText string, filepath string, password string) error {
 	// Create a new AES block cipher.
 	block, err := aes.NewCipher(KEY[:])
 	if err != nil {
-		return err
+		return nil, err
 	}
 
 	// CBC mode always works in whole blocks.
 	originData := _PKCS5Padding([]byte(plainText), aes.BlockSize)
 
 	// Create a new CBC mode encrypter using our AES block cipher, and use it
-	// to encrypt our text.
+	// to Encrypt our text.
 	ciphertext := make([]byte, aes.BlockSize+len(originData))
 	enc := cipher.NewCBCEncrypter(block, iv)
 	enc.CryptBlocks(ciphertext, append(iv[:], originData...))
 
-	file, err := os.Create(filepath)
-	if err != nil {
-		return err
-	}
-	defer file.Close()
-
-	_, err = file.Write(ciphertext)
-	return err
+	return ciphertext, nil
 }
 
-func LoadFromFile(filepath string, password string) (string, error) {
+func Decrypt(ciphertext string, password string) (string, error) {
 
-	if err := validatePassword(password); err != nil {
-		return "", err
-	}
-
-	f, _ := os.Open(filepath)
-	defer f.Close()
-
-	ciphertext, err := ioutil.ReadAll(f)
-	if err != nil {
+	if err := validatePasswordAndContent(ciphertext, password); err != nil {
 		return "", err
 	}
 
@@ -82,11 +65,12 @@ func LoadFromFile(filepath string, password string) (string, error) {
 		return "", errors.New("ciphertext is not a multiple of the block size")
 	}
 
-	mode := cipher.NewCBCDecrypter(block, iv)
+	mode := cipher.NewCBCDecrypter(block, []byte(iv))
 
 	// CryptBlocks can work in-place if the two arguments are the same.
-	mode.CryptBlocks(ciphertext, ciphertext)
-	plainText := _PKCS5UnPadding(ciphertext)
+	ciphertexthex := make([]byte, len(ciphertext))
+	mode.CryptBlocks(ciphertexthex, []byte(ciphertext))
+	plainText := _PKCS5UnPadding(ciphertexthex)
 	return string(plainText), nil
 }
 
