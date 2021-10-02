@@ -8,11 +8,12 @@ COLOR_END := $(shell echo -e "\033[0m")
 build: clean _version test
 	@echo -e "$(COLOR_YELLOW)Building the project $(COLOR_END)"
 	mkdir build || true
-	go build -v -o build/go-pass-keeper main.go
+	go build -o build/go-pass-keeper main.go
 
 test:
 	@echo -e "$(COLOR_YELLOW)Building the project $(COLOR_END)"
-	go test --json
+	@#go test --json -v  ./..
+	 go test -v  ./src/*
 
 _version:
 	@echo -e "go-pass-keeper version: $(VERSION)-$(RELEASE)"
