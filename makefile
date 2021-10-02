@@ -13,7 +13,7 @@ build: clean _version test
 test:
 	@echo -e "$(COLOR_YELLOW)Building the project $(COLOR_END)"
 	@#go test --json -v  ./..
-	 go test -v  ./src/*
+	 go test -v  ./...
 
 _version:
 	@echo -e "go-pass-keeper version: $(VERSION)-$(RELEASE)"

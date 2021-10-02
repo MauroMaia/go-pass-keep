@@ -44,7 +44,7 @@ func Test_SaveToFile(t *testing.T) {
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			err := SaveToFile(tt.args.content, tt.args.filepath, tt.args.password)
-			if _, err := os.Stat(FILE_PATH); os.IsNotExist(err) {
+			if _, err := os.Stat(FILE_PATH); !os.IsNotExist(err) {
 				os.Remove(FILE_PATH)
 			}
 			if err != nil {
