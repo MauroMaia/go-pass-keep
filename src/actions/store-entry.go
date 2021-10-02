@@ -11,8 +11,11 @@ import (
 //import "go-pass-keeper/src/utils"
 
 func StoreEntry(user string) {
+	// TODO - this should be like:  func StoreEntry(user string,vault *Vault)
+
 	//Todo validate inputs
 	// TODO validate if exist
+	// TODO load vault
 
 	entry, err := model.NewEntry(
 		"",
@@ -29,5 +32,7 @@ func StoreEntry(user string) {
 	}
 
 	log.Println(string(b))
+
+	// TODO - Store the vault again
 	//utils.SaveToFile(tt.args.content, tt.args.filepath, tt.args.password)
 }
