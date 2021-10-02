@@ -88,6 +88,10 @@ func (vault Vault) ContainsEntry(user string, title string) bool {
 	return false
 }
 
+func (vault Vault) GetAllEntries() []*Entry {
+	return vault.entries
+}
+
 func (vault Vault) PutEntry(entry *Entry) *Vault {
 	vault.entries = append(vault.entries, entry)
 	vault.updatedAt = time.Now().Format(time.RFC3339)

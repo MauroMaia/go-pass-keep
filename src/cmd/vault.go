@@ -2,6 +2,7 @@ package cmd
 
 import (
 	"bufio"
+	"encoding/json"
 	"fmt"
 	log "github.com/sirupsen/logrus"
 	"github.com/spf13/cobra"
@@ -105,7 +106,13 @@ var vaultListCmd = &cobra.Command{
 	Use:   "list",
 	Short: "List All entries",
 	Run: func(cmd *cobra.Command, args []string) {
-		cmd.Help()
+		entries := vaultInMem.GetAllEntries()
+		vaultJsonBytes, err := json.Marshal(entries)
+		if err != nil {
+			log.Fatal(err)
+		}
+
+		fmt.Printf("%s", string(vaultJsonBytes))
 	},
 }
 var vaultFindCmd = &cobra.Command{
