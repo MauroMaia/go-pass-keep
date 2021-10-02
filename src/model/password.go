@@ -1,7 +1,7 @@
 package model
 
 import (
-	"errors"
+	"go-pass-keeper/src/utils"
 )
 
 type Password struct {
@@ -18,9 +18,10 @@ func (p Password) GetPassword() (string, error) {
 }
 
 func (p Password) SetPassword(newPassword string) (*Password, error) {
-	if len(newPassword) > 8 {
-		p.password = newPassword
-		return &p, nil
+	if err := utils.ValidatePassword(newPassword); err != nil {
+		return &p, err
 	}
-	return &p, errors.New("Password len is invalid. Must be >= 8")
+
+	p.password = newPassword
+	return &p, nil
 }

@@ -1,20 +1,32 @@
 package cmd
 
 import (
+	"bufio"
+	"fmt"
 	log "github.com/sirupsen/logrus"
 	"github.com/spf13/cobra"
+	"golang.org/x/term"
 	"os"
+	"strings"
+	"syscall"
 
 	"path/filepath"
+
+	"go-pass-keeper/src/actions"
+	"go-pass-keeper/src/model"
 )
-import "go-pass-keeper/src/actions"
 
 var DatabaseFilePath string
+var VaultUser string
+var VaultTitle string
+var vaultInMem *model.Vault
 
 func init() {
 
-	vaultStoreCmd.PersistentFlags().StringVarP(&DatabaseFilePath, "user", "u", "", "... (required)")
+	vaultStoreCmd.PersistentFlags().StringVarP(&VaultUser, "user", "u", "", "... (required)")
 	vaultStoreCmd.MarkPersistentFlagRequired("user")
+	vaultStoreCmd.PersistentFlags().StringVarP(&VaultTitle, "title", "t", "", "... (required)")
+	vaultStoreCmd.MarkPersistentFlagRequired("title")
 
 	vaultCmd.AddCommand(vaultStoreCmd)
 	vaultCmd.AddCommand(vaultListCmd)
@@ -35,6 +47,20 @@ var vaultCmd = &cobra.Command{
 			cmd.Help()
 			log.Fatalf("The pwd %s does not exit.", parent)
 		}
+
+		if _, err := os.Stat(DatabaseFilePath); os.IsNotExist(err) {
+			reader := bufio.NewReader(os.Stdin)
+
+			fmt.Print("Enter Vault name: ")
+			vaultTitle, err := reader.ReadString('\n')
+			if err != nil {
+				log.Fatalf("Unable to read vault name.")
+			}
+
+			vaultInMem, _ = actions.CreateVault(DatabaseFilePath, strings.TrimSpace(vaultTitle), readPasswordFromTerm("vault"))
+		} else {
+			vaultInMem, _ = actions.LoadVault(DatabaseFilePath, readPasswordFromTerm("vault"))
+		}
 	},
 }
 
@@ -43,7 +69,13 @@ var vaultStoreCmd = &cobra.Command{
 	Short: "Save new entry",
 	Run: func(cmd *cobra.Command, args []string) {
 		user, _ := cmd.Flags().GetString("user")
-		actions.StoreEntry(user)
+		title, _ := cmd.Flags().GetString("title")
+
+		if contains := vaultInMem.ContainsEntry(user, title); contains {
+			log.Fatal("Some entry already exist with the same title and username")
+		}
+
+		actions.StoreEntry(user, title, readPasswordFromTerm("entry"), vaultInMem)
 	},
 }
 var vaultListCmd = &cobra.Command{
@@ -59,4 +91,16 @@ var vaultFindCmd = &cobra.Command{
 	Run: func(cmd *cobra.Command, args []string) {
 		cmd.Help()
 	},
+}
+
+func readPasswordFromTerm(dest string) string {
+	fmt.Printf("Enter %s  password: ", dest)
+	bytePassword, err := term.ReadPassword(syscall.Stdin)
+	if err != nil {
+		log.Fatalf("Unable to read vault password.")
+	}
+	fmt.Println()
+
+	password := string(bytePassword)
+	return strings.TrimSpace(password)
 }

@@ -1,11 +1,13 @@
 package utils
 
 import (
+	log "github.com/sirupsen/logrus"
 	"io/ioutil"
 	"os"
 )
 
-func saveFileBytes(text []byte, filepath string) error {
+func SaveFileBytes(text []byte, filepath string) error {
+	log.Infof("Saving byte[] to file %s \n", filepath)
 	file, err := os.Create(filepath)
 	if err != nil {
 		return err
@@ -16,7 +18,8 @@ func saveFileBytes(text []byte, filepath string) error {
 	return err
 }
 
-func readFile(filepath string) ([]byte, error) {
+func ReadFileToBytes(filepath string) ([]byte, error) {
+	log.Infof("Reading file %s \n", filepath)
 	f, _ := os.Open(filepath)
 	defer f.Close()
 

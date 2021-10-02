@@ -82,13 +82,7 @@ func validatePasswordAndContent(content string, password string) error {
 		return errors.New("ciphertext too short")
 	}
 
-	return validatePassword(password)
-}
-func validatePassword(password string) error {
-	if len(password) < 8 {
-		return errors.New("password too short")
-	}
-	return nil
+	return ValidatePassword(password)
 }
 
 func _PKCS5Padding(src []byte, blockSize int) []byte {
