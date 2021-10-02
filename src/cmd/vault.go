@@ -19,6 +19,7 @@ import (
 var DatabaseFilePath string
 var VaultUser string
 var VaultTitle string
+var VaultPassword string
 var vaultInMem *model.Vault
 
 func init() {
@@ -57,9 +58,11 @@ var vaultCmd = &cobra.Command{
 				log.Fatalf("Unable to read vault name.")
 			}
 
-			vaultInMem, _ = actions.CreateVault(DatabaseFilePath, strings.TrimSpace(vaultTitle), readPasswordFromTerm("vault"))
+			VaultPassword = readPasswordFromTerm("vault")
+			vaultInMem, _ = actions.CreateVault(DatabaseFilePath, strings.TrimSpace(vaultTitle), VaultPassword)
 		} else {
-			vaultInMem, _ = actions.LoadVault(DatabaseFilePath, readPasswordFromTerm("vault"))
+			VaultPassword = readPasswordFromTerm("vault")
+			vaultInMem, _ = actions.LoadVault(DatabaseFilePath, VaultPassword)
 		}
 	},
 }
@@ -75,7 +78,27 @@ var vaultStoreCmd = &cobra.Command{
 			log.Fatal("Some entry already exist with the same title and username")
 		}
 
-		actions.StoreEntry(user, title, readPasswordFromTerm("entry"), vaultInMem)
+		entry, err := model.NewEntry(
+			title,
+			user,
+			readPasswordFromTerm("entry"),
+		)
+		if err != nil {
+			log.Fatal(err)
+		}
+
+		vaultInMem = vaultInMem.PutEntry(entry)
+		vaultJsonBytes, err := json.Marshal(entry)
+		if err != nil {
+			log.Fatal(err)
+		}
+
+		err = actions.StoreVault(vaultInMem, DatabaseFilePath, VaultPassword)
+		if err != nil {
+			log.Fatal(err)
+		}
+
+		fmt.Printf("%s", string(vaultJsonBytes))
 	},
 }
 var vaultListCmd = &cobra.Command{
