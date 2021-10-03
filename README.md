@@ -30,7 +30,11 @@ my personal knowledge of golang.
 
 - [x] Save encrypted file
 - [x] Load from encrypted file
-- [ ] ...
+- [ ] ... 
+- [ ] Run a check if any of my password have been pawned 
+- [ ] Random password generator  
+- [ ] Create deployment process over rpm file
+- [ ] Create a simple GUI version
 
 ## Licence
 

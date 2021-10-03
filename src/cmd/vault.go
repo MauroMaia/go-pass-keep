@@ -34,6 +34,10 @@ func init() {
 	vaultCmd.AddCommand(vaultListCmd)
 	vaultCmd.AddCommand(vaultFindCmd)
 
+	vaultImportCmd.PersistentFlags().StringVarP(&VaultTitle, "source", "s", "", "-s /file/path.csv (required)")
+	vaultImportCmd.MarkPersistentFlagRequired("source")
+	vaultCmd.AddCommand(vaultImportCmd)
+
 	vaultCmd.PersistentFlags().StringVarP(&DatabaseFilePath, "file", "f", "", "File where the password will be stored. (required)")
 	vaultCmd.MarkPersistentFlagRequired("file")
 
@@ -120,6 +124,32 @@ var vaultFindCmd = &cobra.Command{
 	Short: "Find entry",
 	Run: func(cmd *cobra.Command, args []string) {
 		cmd.Help()
+	},
+}
+
+var vaultImportCmd = &cobra.Command{
+	Use:   "import",
+	Short: "import vault from csv file",
+	Run: func(cmd *cobra.Command, args []string) {
+		fileSource, _ := cmd.Flags().GetString("source")
+
+		entries, _ := actions.ReadCSVFileToEntryList(fileSource)
+		for _, entry := range entries {
+			if contains := vaultInMem.ContainsEntry(entry.GetUsername(), entry.GetTitle()); contains {
+				// TODO - LOG with more data
+				log.Warn("Some entry already exist with the same title and username")
+				continue
+			}
+
+			vaultInMem = vaultInMem.PutEntry(entry)
+		}
+
+		err := actions.StoreVault(vaultInMem, DatabaseFilePath, VaultPassword)
+		if err != nil {
+			log.Fatal(err)
+		}
+
+		fmt.Println("Importing csv complete.")
 	},
 }
 

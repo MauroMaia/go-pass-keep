@@ -6,7 +6,6 @@ import (
 
 	"github.com/spf13/cobra"
 	"go-pass-keeper/src/utils"
-	// "github.com/spf13/viper"
 )
 
 var Verbose bool
@@ -18,7 +17,12 @@ var BuildDate string
 var rootCmd = &cobra.Command{
 	Use:   "go-pass-keeper",
 	Short: "go-pass-keeper is a very fast offline password keeper",
-	Long:  `TODO`,
+	Long: `go-pass-keeper is a very fast offline password keeper.
+You should be able to save and search your password form you cli.
+
+MIT License
+Copyright (c) 2021 MauroMaia
+`,
 	Run: func(cmd *cobra.Command, args []string) {
 		_ = cmd.Help()
 		os.Exit(1)

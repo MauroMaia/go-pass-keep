@@ -15,9 +15,17 @@ type Entry struct {
 	updatedAt string
 }
 
+func (e Entry) GetTitle() string {
+	return e.title
+}
+
+func (e Entry) GetUsername() string {
+	return e.username
+}
+
 func NewEntry(title string, user string, password string) (*Entry, error) {
 	p, err := NewPassword(password)
-	if err != nil {
+	if err != nil && password != "" {
 		return nil, err
 	}
 
@@ -35,7 +43,7 @@ func NewEntry(title string, user string, password string) (*Entry, error) {
 
 func NewEntryFull(uuid string, title string, user string, password string, createdAt string, updatedAt string) (*Entry, error) {
 	p, err := NewPassword(password)
-	if err != nil {
+	if err != nil && password != "" {
 		return nil, err
 	}
 

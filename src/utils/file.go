@@ -1,6 +1,7 @@
 package utils
 
 import (
+	"encoding/csv"
 	log "github.com/sirupsen/logrus"
 	"io/ioutil"
 	"os"
@@ -24,4 +25,22 @@ func ReadFileToBytes(filepath string) ([]byte, error) {
 	defer f.Close()
 
 	return ioutil.ReadAll(f)
+}
+
+func ReadCSVFileToMap(filepath string) ([][]string, error) {
+	log.Infof("Reading csv file %s \n", filepath)
+	f, err := os.Open(filepath)
+	if err != nil {
+		log.Fatal(err)
+	}
+	defer f.Close()
+
+	// read csv values using csv.Reader
+	csvReader := csv.NewReader(f)
+
+	rec, err := csvReader.ReadAll()
+	if err != nil {
+		return nil, err
+	}
+	return rec, nil
 }
