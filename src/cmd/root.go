@@ -11,6 +11,9 @@ import (
 
 var Verbose bool
 var UseColor bool
+var Version string
+var CommitId string
+var BuildDate string
 
 var rootCmd = &cobra.Command{
 	Use:   "go-pass-keeper",
@@ -31,7 +34,11 @@ func init() {
 }
 
 // Execute executes the root command.
-func Execute() {
+func Execute(version string, commitId string, buildDate string) {
+	Version = version
+	CommitId = commitId
+	BuildDate = buildDate
+
 	if err := rootCmd.Execute(); err != nil {
 		_, _ = fmt.Fprintln(os.Stderr, err)
 		os.Exit(1)

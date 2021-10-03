@@ -2,8 +2,11 @@ package main
 
 import "go-pass-keeper/src/cmd"
 
-const VERSION = "0.0.1"
+const VERSION = ""
+const COMMIT_ID = ""
+const BUILD_DATE = ""
 
 func main() {
-	cmd.Execute()
+
+	cmd.Execute(VERSION, COMMIT_ID, BUILD_DATE)
 }
