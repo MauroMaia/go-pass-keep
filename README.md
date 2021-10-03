@@ -6,6 +6,26 @@
 This project work as a case study to crete a cli password manager and increase 
 my personal knowledge of golang.
 
+## Install
+
++ Option 1: From RPM (WIP)
++ Option 2: From Github Releases
+    ```bash
+      cd /tmp &&
+        wget https://github.com/MauroMaia/go-pass-keep/releases/download/v0.0.5/go-pass-keeper &&  
+        chmod +x go-pass-keeper && 
+        mv go-pass-keeper /usr/local/bin/
+    ```  
++ Option 3: From git
+    ```bash
+        export GPK_DIR="/tmp/pgk" && (
+          rm -rf $GPK_DIR
+          git clone https://github.com/MauroMaia/go-pass-keep.git "$GPK_DIR"
+          cd "$GPK_DIR"
+          git checkout `git describe --abbrev=0 --tags --match "v[0-9]*" $(git rev-list --tags --max-count=1)`
+        ) && cd "$GPK_DIR" && make
+    ```
+
 ## Work in Progress
 
 - [x] Save encrypted file
