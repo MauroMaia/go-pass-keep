@@ -48,8 +48,8 @@ func TestPassword_SetPassword(t *testing.T) {
 		want    *Password
 		wantErr bool
 	}{
-		{"Fail test case. Password < 8 ", fields{password: "1234567"}, args{newPassword: "123"}, &Password{password: "1234567"}, true},
-		{"Success test case", fields{password: "123456789"}, args{newPassword: "123456789"}, &Password{password: "123456789"}, false},
+		{"Fail test case. Password < 8 ", fields{password: "875621"}, args{newPassword: "123"}, &Password{password: "875621"}, true},
+		{"Success test case", fields{password: "875621"}, args{newPassword: "875621149"}, &Password{password: "875621149"}, false},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
