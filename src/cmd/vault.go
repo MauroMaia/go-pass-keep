@@ -80,7 +80,7 @@ var vaultStoreCmd = &cobra.Command{
 		title, _ := cmd.Flags().GetString("title")
 
 		if contains := vaultInMem.ContainsEntry(user, title); contains {
-			log.Fatal("Some entry already exist with the same title and username")
+			log.Fatal("Exist one entry with the same title and username")
 		}
 
 		entry, err := model.NewEntry(

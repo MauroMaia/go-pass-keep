@@ -36,7 +36,7 @@ func ReadCSVFileToEntryList(filepath string) ([]*model.Entry, error) {
 					mapEntries[0][4]: mapEntry[4],
 					mapEntries[0][5]: mapEntry[5],
 				}).
-				Warnf("Failed to generat entry. Reason: %s", err)
+				Errorf("Failed to generate entry. Reason: %s", err)
 			continue
 		}
 		result = append(result, entry)

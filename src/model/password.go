@@ -22,6 +22,9 @@ func (p Password) SetPassword(newPassword string) (*Password, error) {
 		return &p, err
 	}
 
+	// Just for user information
+	utils.IsPasswordWeak(newPassword)
+
 	p.password = newPassword
 	return &p, nil
 }
