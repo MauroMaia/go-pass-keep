@@ -1,13 +1,21 @@
 # go-pass-keeper
+
+![example workflow](https://github.com/MauroMaia/go-pass-keep/actions/workflows/go.yml/badge.svg)
  
 This project work as a case study to crete a cli password manager and increase 
 my personal knowledge of golang.
 
+## Work in Progress
+
+- [x] Save encrypted file
+- [x] Load from encrypted file
+- [ ] ...
+
 ## Licence
 
-This project works under MIT licence.
+This project is developed under MIT license. You can consult the full licence text ![here](https://github.com/MauroMaia/go-pass-keep/blob/main/LICENSE).
 
-Remember:
+Quick reminder:
 
 THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
 IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
