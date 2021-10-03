@@ -18,14 +18,11 @@ jobs:
       with:
         go-version: 1.16
 
-    - name: Build
-      run: go build -v ./...
+    - name: Run all unit test
+      run: make test
 
-    - name: Test
-      run: go test -v ./...
-
-    - name: Build bin
-      run: go build  -o go-pass-keeper ./main.go
+    - name: Build process
+      run: make build
 
     - name: Create Release
       id: create_release
@@ -44,6 +41,6 @@ jobs:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       with:
         upload_url: ${{ steps.create_release.outputs.upload_url }} # This pulls from the CREATE RELEASE step above, referencing it's ID to get its outputs object, which include a `upload_url`. See this blog post for more info: https://jasonet.co/posts/new-features-of-github-actions/#passing-data-to-future-steps
-        asset_path: ./go-pass-keeper
+        asset_path: ./build/go-pass-keeper
         asset_name: go-pass-keeper
         asset_content_type: application/octet-stream
