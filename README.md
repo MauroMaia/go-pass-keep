@@ -1,7 +1,8 @@
 # go-pass-keeper
 
-![example workflow](https://github.com/MauroMaia/go-pass-keep/actions/workflows/go.yml/badge.svg)
- 
+![example Create Release](https://github.com/MauroMaia/go-pass-keep/actions/workflows/go.yml/badge.svg)
+![example CodeQL](https://github.com/MauroMaia/go-pass-keep/actions/workflows/codeql-analysis.yml/badge.svg)
+
 This project work as a case study to crete a cli password manager and increase 
 my personal knowledge of golang.
 
