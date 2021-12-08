@@ -12,7 +12,7 @@ my personal knowledge of golang.
 + Option 2: From Github Releases
     ```bash
       cd /tmp &&
-        wget https://github.com/MauroMaia/go-pass-keep/releases/download/v0.0.5/go-pass-keeper &&  
+        wget https://github.com/MauroMaia/go-pass-keep/releases/download/v0.2.1/go-pass-keeper &&  
         chmod +x go-pass-keeper && 
         mv go-pass-keeper /usr/local/bin/
     ```  

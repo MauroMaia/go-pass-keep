@@ -111,6 +111,7 @@ var vaultStoreCmd = &cobra.Command{
 		fmt.Printf("%s", string(vaultJsonBytes))
 	},
 }
+
 var vaultListCmd = &cobra.Command{
 	Use:   "list",
 	Short: "List All entries",
@@ -124,6 +125,7 @@ var vaultListCmd = &cobra.Command{
 		fmt.Printf("%s", string(vaultJsonBytes))
 	},
 }
+
 var vaultFindCmd = &cobra.Command{
 	Use:   "find",
 	Short: "Find entry",
