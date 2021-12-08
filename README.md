@@ -32,7 +32,9 @@ my personal knowledge of golang.
 - [x] Load from encrypted file
 - [ ] ... 
 - [ ] Run a check if any of my password have been pawned 
-- [ ] Random password generator  
+- [ ] Random password generator 
+- [ ] Table output format
+- [ ] Export option (either way the main output  format is json)
 - [ ] Create deployment process over rpm file
 - [ ] Create a simple GUI version
 

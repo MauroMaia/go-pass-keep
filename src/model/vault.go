@@ -91,11 +91,31 @@ func (vault *Vault) UnmarshalJSON(data []byte) (err error) {
 	return nil
 }
 
-func (vault Vault) ContainsEntry(user string, title string) bool {
+// ContainsEntry This method check if one entry exist give its username,
+// tile/description, and groupPath/groupTree names. The search is performed in
+// a top down way.
+func (vault Vault) ContainsEntry(user string, title string, groupPath []string) bool {
 
 	for _, entry := range vault.entries {
 		if entry.title == title && entry.username == user {
 			return true
+		}
+	}
+	if groupPath != nil {
+		var thisGroupName string
+
+		if len(groupPath) == 1 {
+			thisGroupName = groupPath[0]
+			groupPath = nil
+		} else {
+			thisGroupName = groupPath[0]
+			groupPath = groupPath[1:]
+		}
+
+		for _, group := range vault.groups {
+			if thisGroupName == group.GetTitle() && group.ContainsEntry(user, title, groupPath) {
+				return true
+			}
 		}
 	}
 	return false
@@ -105,8 +125,52 @@ func (vault Vault) GetAllEntries() []*Entry {
 	return vault.entries
 }
 
-func (vault Vault) PutEntry(entry *Entry) *Vault {
-	vault.entries = append(vault.entries, entry)
+// PutEntryInVault This method append an entry to the vault creating any
+// group/SubGroup if needed.
+// WARNING: There is no check if the entry already exist.
+func (vault Vault) PutEntryInVault(entry *Entry, groupPath []string) (Vault, error) {
+	if groupPath == nil {
+		vault.entries = append(vault.entries, entry)
+		vault.updatedAt = time.Now().Format(time.RFC3339)
+		return vault, nil
+	}
+
+	var thisGroupName string
+
+	if len(groupPath) == 1 {
+		thisGroupName = groupPath[0]
+		groupPath = nil
+	} else {
+		thisGroupName = groupPath[0]
+		groupPath = groupPath[1:]
+	}
+
+	for index, group := range vault.groups {
+		if group.GetTitle() == thisGroupName {
+			group, err := group.PutEntryInGroup(entry, groupPath)
+			if err != nil {
+				return vault, err
+			}
+			vault.groups[index] = group
+			vault.updatedAt = time.Now().Format(time.RFC3339)
+			return vault, err
+		}
+	}
+
+	/*
+	 * if the logic came to here the group does not exit and need to be created
+	 */
+	group, err := NewGroup(thisGroupName)
+	if err != nil {
+		return vault, err
+	}
+
+	group, err = group.PutEntryInGroup(entry, groupPath)
+	if err != nil {
+		return vault, err
+	}
+
+	vault.groups = append(vault.groups, group)
 	vault.updatedAt = time.Now().Format(time.RFC3339)
-	return &vault
+	return vault, nil
 }

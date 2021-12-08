@@ -79,7 +79,7 @@ var vaultStoreCmd = &cobra.Command{
 		user, _ := cmd.Flags().GetString("user")
 		title, _ := cmd.Flags().GetString("title")
 
-		if contains := vaultInMem.ContainsEntry(user, title); contains {
+		if contains := vaultInMem.ContainsEntry(user, title, nil); contains {
 			log.Fatal("Exist one entry with the same title and username")
 		}
 
@@ -92,7 +92,12 @@ var vaultStoreCmd = &cobra.Command{
 			log.Fatal(err)
 		}
 
-		vaultInMem = vaultInMem.PutEntry(entry)
+		vaultInMemTmp, err := vaultInMem.PutEntryInVault(entry, nil)
+		if err != nil {
+			log.Fatal(err)
+		}
+		vaultInMem = &vaultInMemTmp
+
 		vaultJsonBytes, err := json.Marshal(entry)
 		if err != nil {
 			log.Fatal(err)
@@ -133,18 +138,9 @@ var vaultImportCmd = &cobra.Command{
 	Run: func(cmd *cobra.Command, args []string) {
 		fileSource, _ := cmd.Flags().GetString("source")
 
-		entries, _ := actions.ReadCSVFileToEntryList(fileSource)
-		for _, entry := range entries {
-			if contains := vaultInMem.ContainsEntry(entry.GetUsername(), entry.GetTitle()); contains {
-				// TODO - LOG with more data
-				log.Warn("Some entry already exist with the same title and username")
-				continue
-			}
+		newVaultInMem, _ := actions.ImportCsvFileToVault(fileSource, *vaultInMem)
 
-			vaultInMem = vaultInMem.PutEntry(entry)
-		}
-
-		err := actions.StoreVault(vaultInMem, DatabaseFilePath, VaultPassword)
+		err := actions.StoreVault(newVaultInMem, DatabaseFilePath, VaultPassword)
 		if err != nil {
 			log.Fatal(err)
 		}

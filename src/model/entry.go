@@ -15,12 +15,12 @@ type Entry struct {
 	updatedAt string
 }
 
-func (e Entry) GetTitle() string {
-	return e.title
+func (entry Entry) GetTitle() string {
+	return entry.title
 }
 
-func (e Entry) GetUsername() string {
-	return e.username
+func (entry Entry) GetUsername() string {
+	return entry.username
 }
 
 func NewEntry(title string, user string, password string) (*Entry, error) {
@@ -70,8 +70,8 @@ func NewEntryFromMap(mapStruct map[string]interface{}) (*Entry, error) {
 	)
 }
 
-func (m Entry) MarshalJSON() ([]byte, error) {
-	password, err := m.password.GetPassword()
+func (entry Entry) MarshalJSON() ([]byte, error) {
+	password, err := entry.password.GetPassword()
 	if err != nil {
 		return nil, err
 	}
@@ -84,11 +84,11 @@ func (m Entry) MarshalJSON() ([]byte, error) {
 		CreatedAt string `json:"created_at"`
 		UpdatedAt string `json:"updated_at"`
 	}{
-		m.uuid,
-		m.title,
-		m.username,
+		entry.uuid,
+		entry.title,
+		entry.username,
 		password,
-		m.createdAt,
-		m.updatedAt,
+		entry.createdAt,
+		entry.updatedAt,
 	})
 }
