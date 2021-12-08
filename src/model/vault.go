@@ -12,6 +12,7 @@ type Vault struct {
 	uuid      string
 	title     string
 	entries   []*Entry
+	groups    []*Group
 	createdAt string
 	updatedAt string
 }
@@ -31,20 +32,22 @@ func NewVault(title string) (*Vault, error) {
 	return v, nil
 }
 
-func (m Vault) MarshalJSON() ([]byte, error) {
+func (vault Vault) MarshalJSON() ([]byte, error) {
 
 	return json.Marshal(struct {
 		Uuid      string   `json:"uuid"`
 		Title     string   `json:"title"`
 		Entries   []*Entry `json:"entries"`
+		Groups    []*Group `json:"groups"`
 		CreatedAt string   `json:"created_at"`
 		UpdatedAt string   `json:"updated_at"`
 	}{
-		m.uuid,
-		m.title,
-		m.entries,
-		m.createdAt,
-		m.updatedAt,
+		vault.uuid,
+		vault.title,
+		vault.entries,
+		vault.groups,
+		vault.createdAt,
+		vault.updatedAt,
 	})
 }
 
@@ -72,6 +75,16 @@ func (vault *Vault) UnmarshalJSON(data []byte) (err error) {
 					return err
 				}
 				vault.entries = append(vault.entries, realEntry)
+			}
+		} else if keyname == "groups" && result[keyname] != nil {
+
+			for _, entry := range result[keyname].([]interface{}) {
+
+				realGroup, err := NewGroupFromMap(entry.(map[string]interface{}))
+				if err != nil {
+					return err
+				}
+				vault.groups = append(vault.groups, realGroup)
 			}
 		}
 	}
